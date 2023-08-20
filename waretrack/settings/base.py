@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from datetime import timedelta
 import dotenv
 dotenv.load_dotenv()
 
@@ -12,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-k_h0xgg9e(pld@tw1s8(f+azy(a7_n23k=h=ni5&0rfj#a$&gz"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,37 +33,36 @@ BASE_APPS = [
 ]
 
 MY_APPS = [
-    # 'apps.base',
-    # 'apps.company',
-    # 'apps.user',
-    # 'apps.catalog',
-    # 'apps.supply',
-    # 'apps.sales',
+    'apps.base',
+    'apps.company',
+    'apps.user',
+    'apps.catalog',
+    'apps.supply',
+    'apps.sales',
 ]
 
 EXTERNAL_APPS = [
-    'rest_framework',
     'corsheaders',
+    'rest_framework',
     'drf_yasg',
 ]
 
 
-INSTALLED_APPS = BASE_APPS + MY_APPS + EXTERNAL_APPS
+INSTALLED_APPS = BASE_APPS + EXTERNAL_APPS + MY_APPS
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'djangorestframework.middleware.DjangoRestFrameworkMiddleware',
     "django.middleware.security.SecurityMiddleware",
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
+    # 'rest_framework.middleware.DjangoRestFrameworkMiddleware',
+    # 'djangorestframework.middleware.DjangoRestFrameworkMiddleware',
     # 'TokenMiddleware',
 ]
-
 
 ROOT_URLCONF = "waretrack.urls"
 
@@ -94,6 +94,7 @@ EMAIL_HOST_USER = 'moren1viguel@gmail.com'
 # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 
+AUTH_USER_MODEL = 'user.Funcionario'
 
 
 
@@ -136,9 +137,29 @@ SWAGGER_SETTINGS = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = '/static/'
+STATIC_ROOT = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=2),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
+    'ALGORITHM': 'HS256',
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'JTI_CLAIM': 'jti',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+}
+
+CORS_ORIGIN_WHITELIST = (
+    #local
+    'http://localhost',
+)
