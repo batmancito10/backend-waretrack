@@ -5,10 +5,11 @@ from apps.base.models import BaseModel
 
 class Company(BaseModel):
     name = models.CharField(max_length=100)
-    Logo = models.ImageField('Logo de la compañia', upload_to='media/')
+    Logo = models.ImageField('Logo de la compañia', upload_to='media/', null=True)
     
 
 class Sede(BaseModel):
     nombre = models.CharField(max_length=255)
     direccion = models.CharField(max_length=255)
     ciudad = models.CharField(max_length=255)
+    company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
