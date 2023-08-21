@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import CategoriaSerializer, ServicioSerializer, ProductoSerializer, productoSedeSerializer, Through_stockSerializer
 # from apps.catalog.models import 
@@ -22,6 +22,21 @@ class ProductoViewsets(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
     permission_classes = [permissions.AllowAny]
     authentication_classes = [JWTAuthentication]
+
+    def retrieve(self, request, *args, **kwargs):
+        """
+        Obtener todos los detalles de un producto
+        
+        
+        Esta vista trae ademas de el producto, trae el stock en las distintas sedes, los detalles de la categoria
+        """
+        instace = self.get_object()
+        categoria = instace.categoria
+        producto_data = self.get_serializer(instace).data
+        sedes_instance = Through_stockSerializer.Meta.model.objects.filter(producto=producto_data["id"], deleted_at=None)
+        producto_data["sedes"] = Through_stockSerializer(sedes_instance, many=True).data
+        producto_data["categoria"] = CategoriaSerializer(categoria).data
+        return Response(producto_data, status=status.HTTP_200_OK)
 
 class ProductoSedeListCreate(ListCreateAPIView):
     queryset = productoSedeSerializer.Meta.model.objects.filter(deleted_at=None)
@@ -47,6 +62,7 @@ class ProductoSedeListCreate(ListCreateAPIView):
         return Response(productos,status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+    
         """
         Crear un producto con sede, y stock
 
@@ -69,3 +85,9 @@ class ProductoSedeListCreate(ListCreateAPIView):
         respuesta = ProductoSerializer(producto).data
         respuesta["sedes"] = stock
         return Response(respuesta,status=status.HTTP_200_OK)
+
+class ProductoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = productoSedeSerializer.Meta.model.objects.filter(deleted_at=None)
+    serializer_class = productoSedeSerializer
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = [JWTAuthentication]

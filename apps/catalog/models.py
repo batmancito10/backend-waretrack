@@ -21,7 +21,7 @@ class Producto(BaseModel):
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(null=True)
     precio = models.FloatField()
-    codigo = models.CharField(max_length=20, null=True) # Generador de codigo
+    codigo = models.CharField(max_length=20, null=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
     sedes = models.ManyToManyField(Sede, through='Through_stock', related_name='productos')
 
@@ -40,4 +40,5 @@ class Servicio(BaseModel):
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField()
     precio = models.FloatField()
-    Categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
+    sedes = models.ManyToManyField(Sede)
