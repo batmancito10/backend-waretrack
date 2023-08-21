@@ -1,12 +1,12 @@
 
 from rest_framework import permissions, status
 from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
-
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.auth import login, logout
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import login, logout
+from drf_yasg import openapi
+from .serializers import UserDetailsSerializer,CompanyDetailsSerializer,SedeDetailsSerializer
 
 
 schema_view = get_schema_view(
@@ -47,17 +47,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         # Obtener el token JWT
         tokens = serializer.validated_data
-        # groups = list(user.groups.values_list('name', flat=True))
-        # empresa = user.id_domain.first().id_company
-        # dominio=user.id_domain.first()
-        # if user.id_domain.exists():
-            # tokens['domain'] = {"id":dominio.id,"name":dominio.name}
-            # tokens['company'] = {"id":empresa.id,"name":empresa.name}
-        # else: 
-            # tokens['domain'] = None
-            # tokens['company'] = None
-        # tokens['rol'] = groups
-        # tokens['nombre'] = f'{user.first_name} {user.last_name}'
+        tokens["user"] = UserDetailsSerializer(user).data
+        tokens["user"]["company"] = CompanyDetailsSerializer(user.sede.first().company).data
+        tokens["user"]["sede"] = SedeDetailsSerializer(user.sede, many=True).data
 
         return Response(tokens,  status=status.HTTP_200_OK)
     def delete(self, request, *args, **kwargs):

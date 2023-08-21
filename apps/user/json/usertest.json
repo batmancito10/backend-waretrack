@@ -1,0 +1,24 @@
+[
+    {
+        "password": "pbkdf2_sha256$600000$1XWy23oxVUDZZGKhRUJ5gw$UP6ZCdF+l0z409jNad25nP7707WSzpp8SxF32rFi18Q=",
+        "first_name": "Miguel",
+        "last_name": "Moreno",
+        "email": "mikhers@gmail.com",
+        "username": "mikhers@gmail.com",
+        "is_staff":true,
+        "is_superuser":true
+    },
+    {
+        "password": "pbkdf2_sha256$600000$p5wVwrrQxvJPtn6YUj3c6X$K9oSlSgJJtQojXTyEN7X3oKm5xsnyySr4pIE/HCGcSs=",
+        "first_name": "Danile",
+        "last_name": "Mendez",
+        "email": "daniel@gmail.com",
+        "username": "daniel@gmail.com"
+    },
+    {
+    "password": "pbkdf2_sha256$600000$p5wVwrrQxvJPtn6YUj3c6X$K9oSlSgJJtQojXTyEN7X3oKm5xsnyySr4pIE/HCGcSs=",
+    "first_name": "Sebastian",
+    "last_name": "Rubiano",
+    "email": "rubianp@gmail.com",
+    "username": "rubianp@gmail.com"
+}]

@@ -9,3 +9,9 @@ class Funcionario(BaseModel,AbstractUser):
     salario = models.FloatField(null=True)
     cargo = models.CharField(max_length=100, null=True)
     sede = models.ManyToManyField(Sede)
+
+    class Meta:
+        verbose_name = 'Usuario'
+        verbose_name_plural = 'Usuarios'
+
+    REQUIRED_FIELDS = ['email','name','last_name','sede',]

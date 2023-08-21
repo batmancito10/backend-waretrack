@@ -8,8 +8,20 @@ from apps.user.models import Funcionario
 class FuncionarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Funcionario
-        fields = ("first_name","last_name","email","password","is_active","salario","cargo","groups","sede","deleted_at")
-        read_only_fields = ("create_at",)
+        exclude = ("user_permissions","date_joined","is_active","is_staff","is_superuser","username")
+        read_only_fields = ("last_login","created_at")
+
+    def validate(self, data):
+        print("ENTROOO")
+        if 'sede' not in data or not data["sede"]:
+            raise serializers.ValidationError({"sede": '"sede" es un campo requerido'})
+
+        return data
+    # def validate_sede(self, value):
+    #     if not value:
+    #         raise serializers.ValidationError('"sede" es un campo requerido')
+    #     return value
+    
 
     def create(self, validated_data):
         email = validated_data['email']

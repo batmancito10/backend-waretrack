@@ -5,5 +5,3 @@ from .serializers import FuncionarioSerializer
 class FuncionarioViewsets(viewsets.ModelViewSet):
     queryset = FuncionarioSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = FuncionarioSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (JWTAuthentication,)

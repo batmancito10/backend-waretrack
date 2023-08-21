@@ -1,27 +1,20 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import CategoriaSerializer, ServicioSerializer, ProductoSerializer, productoSedeSerializer, Through_stockSerializer
 # from apps.catalog.models import 
 
 class CategoriaViewsets(viewsets.ModelViewSet):
     queryset = CategoriaSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = CategoriaSerializer
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [JWTAuthentication]
 
 class ServicioViewsets(viewsets.ModelViewSet):
     queryset = ServicioSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = ServicioSerializer
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [JWTAuthentication]
 
 class ProductoViewsets(viewsets.ModelViewSet):
     queryset = ProductoSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = ProductoSerializer
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [JWTAuthentication]
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -41,8 +34,6 @@ class ProductoViewsets(viewsets.ModelViewSet):
 class ProductoSedeListCreate(ListCreateAPIView):
     queryset = productoSedeSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = productoSedeSerializer
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [JWTAuthentication]
 
     def get(self, request, *args, **kwargs):
         """
@@ -89,5 +80,3 @@ class ProductoSedeListCreate(ListCreateAPIView):
 class ProductoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = productoSedeSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = productoSedeSerializer
-    permission_classes = [permissions.AllowAny]
-    authentication_classes = [JWTAuthentication]
