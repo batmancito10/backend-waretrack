@@ -5,3 +5,5 @@ from .serializers import FuncionarioSerializer
 class FuncionarioViewsets(viewsets.ModelViewSet):
     queryset = FuncionarioSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = FuncionarioSerializer
+
+    # def create(self, )

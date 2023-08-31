@@ -13,3 +13,6 @@ class Sede(BaseModel):
     direccion = models.CharField(max_length=255)
     ciudad = models.CharField(max_length=255)
     company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return str(self.nombre)

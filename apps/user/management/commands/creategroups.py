@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group
+from django.
 
 class Command(BaseCommand):
     help = 'Crea los grupos de permisos: admin, ventas, bodega, talento.'
