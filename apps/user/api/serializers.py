@@ -2,6 +2,7 @@ from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from apps.user.models import Funcionario
+from apps.company.api.serializers import SedeSerializer
 
 
 
@@ -12,7 +13,6 @@ class FuncionarioSerializer(serializers.ModelSerializer):
         read_only_fields = ("last_login","created_at")
 
     def validate(self, data):
-        print("ENTROOO")
         if 'sede' not in data or not data["sede"]:
             raise serializers.ValidationError({"sede": '"sede" es un campo requerido'})
 
@@ -52,3 +52,9 @@ class FuncionarioSerializer(serializers.ModelSerializer):
             validated_data['username'] = validated_data['email']
 
         return super().partial_update(instance, validated_data)
+    
+class FuncionarioTotalSerialiser(serializers.ModelSerializer):
+    sede = SedeSerializer(many=True)
+    class Meta:
+        model = Funcionario
+        exclude = ("user_permissions","date_joined","is_staff","is_superuser","username", "password")
