@@ -26,12 +26,13 @@ class Command(BaseCommand):
         with open("apps/user/json/usertest.json", "r", encoding="utf-8") as JSONUsers:
             users = json.load(JSONUsers)
         index=0
+        grupos = Group.objects.filter()
         for user in users:
             user, create = Funcionario.objects.get_or_create(**user)
+            user.groups.set([grupos[index]])
             user.sede.set([sedes_instances[index]])
             self.stdout.write(f"Usuario {self.style.NOTICE(user.email)} creado correctamente. ... {self.style.SUCCESS('OK')}")
 
-            # user_.groups.set([group])
             index+=1
 
         self.stdout.write(self.style.SUCCESS("Se creo correctamente Waretrack."))
