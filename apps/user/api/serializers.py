@@ -1,6 +1,7 @@
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
+from apps.base.api.serializers import GroupSerializer
 from apps.user.models import Funcionario
 from apps.company.api.serializers import SedeSerializer
 
@@ -55,6 +56,7 @@ class FuncionarioSerializer(serializers.ModelSerializer):
     
 class FuncionarioTotalSerialiser(serializers.ModelSerializer):
     sede = SedeSerializer(many=True)
+    groups = GroupSerializer(many=True)
     class Meta:
         model = Funcionario
         exclude = ("user_permissions","date_joined","is_staff","is_superuser","username", "password")

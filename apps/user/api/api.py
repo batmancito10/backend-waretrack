@@ -14,6 +14,10 @@ class FuncionarioViewsets(viewsets.ModelViewSet):
         company = usuario.sede.first().company.id
         instance = FuncionarioTotalSerialiser.Meta.model.objects.filter(deleted_at=None, sede__company=company)
         instance = FuncionarioTotalSerialiser(instance,many=True)
+        # for ob in instance.data:
+        #     print(ob)
+        #     ob["groups"] = GroupSerializer(ob.groups, many=True)
+
         return Response(instance.data, status=status.HTTP_200_OK)
 
 class GruposList(viewsets.GenericViewSet):

@@ -1,12 +1,15 @@
 
-from rest_framework import permissions, status
+from rest_framework import permissions, status, viewsets
 from drf_yasg.views import get_schema_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import login, logout
+from django.shortcuts import get_object_or_404
+from django.apps import apps
+from .serializers import GroupSerializer
 from drf_yasg import openapi
-from .serializers import UserDetailsSerializer,CompanyDetailsSerializer,SedeDetailsSerializer
+from .serializers import UserDetailsSerializer,CompanyDetailsSerializer,SedeDetailsSerializer,EmailSerializer
 
 
 schema_view = get_schema_view(
@@ -23,6 +26,30 @@ schema_view = get_schema_view(
         permission_classes=[permissions.AllowAny],
 )
 
+from rest_framework.views import APIView
+from django.contrib.auth import login
+from drf_yasg.utils import swagger_auto_schema
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.auth import login, logout
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from apps.user.api.serializers import FuncionarioTotalSerialiser
+
+
+
+def loginTokenUser(request, userr):
+    if not userr.is_active:
+        return Response({"detail": "Usuario inactivo"},status=status.HTTP_401_UNAUTHORIZED)
+    login(request, userr)
+
+    refresh = RefreshToken.for_user(userr)
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
+
+    tokens = {"access":access_token, "refresh":refresh_token}
+    tokens["user"] = FuncionarioTotalSerialiser(userr).data
+    return tokens
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -45,11 +72,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         # Iniciar sesión en Django
         login(request, user)
 
+
         # Obtener el token JWT
         tokens = serializer.validated_data
         tokens["user"] = UserDetailsSerializer(user).data
         tokens["user"]["company"] = CompanyDetailsSerializer(user.sede.first().company).data
         tokens["user"]["sede"] = SedeDetailsSerializer(user.sede, many=True).data
+        tokens["user"]["groups"] = GroupSerializer(user.groups, many=True).data
 
         return Response(tokens,  status=status.HTTP_200_OK)
     def delete(self, request, *args, **kwargs):
@@ -61,3 +90,26 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         logout(request)
         return Response({"detail": "Sesión finalizada"}, status=status.HTTP_200_OK)
 
+class UserValidationGoogle(viewsets.GenericViewSet):
+    serializer_class = EmailSerializer
+    permission_classes = [permissions.AllowAny,]
+    # authentication_classes = []
+    # @swagger_auto_schema(request_body=EmailSerializer)
+    def create(self, request, *args, **kwargs):
+        """
+        JWT para usuarios de 'Google'
+        
+
+        En esta vista se debe pasar el Email de el usuario y el token generado por la API de google
+        """
+        serializer = EmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+        Funcionario = apps.get_model('user', 'Funcionario')
+        userr =  get_object_or_404(Funcionario, email=email)
+
+        print(userr)
+
+        tokens = loginTokenUser(request, userr)
+
+        return Response(tokens, status=status.HTTP_200_OK)  
