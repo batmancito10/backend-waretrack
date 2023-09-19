@@ -9,4 +9,4 @@ python manage.py migrate
 python manage.py creategroups
 python manage.py createcompany
 python manage.py createsupply
-python manage.py createproducts
+python manage.py createproduts
