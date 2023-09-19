@@ -1,0 +1,42 @@
+[
+  {
+    "created_at": "2023-09-14T23:20:02.711218-05:00",
+    "nombre": "Tomate",
+    "descripcion": "Tomate toronto",
+    "precio": 5000,
+    "codigo": "408000926367",
+    "categoria": 1
+  },
+  {
+    "created_at": "2023-09-15T00:20:03.708770-05:00",
+    "nombre": "cebolla",
+    "descripcion": "cebolla cucmacuca",
+    "precio": 400,
+    "codigo": "099284855989",
+    "categoria": 1
+  },
+  {
+    "created_at": "2023-09-15T00:21:31.658071-05:00",
+    "nombre": "Bicicleta GW",
+    "descripcion": "cucamatoca GW",
+    "precio": 2000000,
+    "codigo": "255638185554",
+    "categoria": 2
+  },
+  {
+    "created_at": "2023-09-15T08:30:22.291738-05:00",
+    "nombre": "Polla",
+    "descripcion": "Polla blanca",
+    "precio": 50000,
+    "codigo": "711076788317",
+    "categoria": 3
+  },
+  {
+    "created_at": "2023-09-15T08:31:13.452243-05:00",
+    "nombre": "Tilapia",
+    "descripcion": "Pescado Tilapia",
+    "precio": 8000,
+    "codigo": "015750903128",
+    "categoria": 4
+  }
+]

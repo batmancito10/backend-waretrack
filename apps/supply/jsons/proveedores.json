@@ -1,0 +1,56 @@
+[
+    {
+      "nombre": "Surtifruver",
+      "direccion": "Calle 20 #73-34",
+      "telefono": "1-645985",
+      "email": "distribuidor@surtifruver.com"
+    },
+    {
+      "nombre": "confecciones",
+      "direccion": "Cra. 54 #5d-5",
+      "telefono": "2-125645",
+      "email": "distribuidor@confecciones.com"
+    },
+    {
+      "nombre": "Surtidora De Aves La 22",
+      "direccion": "Cra. 81d #8 b",
+      "telefono": "8-123985",
+      "email": "distribuidor@aves22.com"
+    },
+    {
+      "nombre": "pescaderia jaramillo",
+      "direccion": "Cra. 5 #2-2",
+      "telefono": "6546871",
+      "email": "distribuidor@pescaderiaja.com"
+    },
+    {
+      "nombre": "tomateria los palacios",
+      "direccion": "Cra. 5 #58-9",
+      "telefono": "526293",
+      "email": "tomateriapalacios@gmail.com"
+    },
+    {
+      "nombre": "pasteleria santander",
+      "direccion": "Cra. 5 #22-83",
+      "telefono": "19565232",
+      "email": "pasteleria.santander@gmail.com"
+    },
+    {
+      "nombre": "empanadas donde el mono",
+      "direccion": "Cra. 5 #5s-8",
+      "telefono": "19565232",
+      "email": "empanadas.mono@gmail.com"
+    },
+    {
+      "nombre": "cristaleria la 13",
+      "direccion": "Cra. 13",
+      "telefono": "19565232",
+      "email": "cristaleria.octavio@gmail.com"
+    },
+    {
+      "nombre": "GW",
+      "direccion": "Cra. 5 #8-2",
+      "telefono": "6546871",
+      "email": "distribuidor@gw.com"
+    }
+  ]

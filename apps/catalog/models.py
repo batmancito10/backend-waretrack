@@ -19,6 +19,7 @@ class Categoria(BaseModel):
 
 class Producto(BaseModel):
     nombre = models.CharField(max_length=255)
+    marca = models.CharField(max_length=100, null=True)
     descripcion = models.TextField(null=True)
     precio = models.FloatField()
     codigo = models.CharField(max_length=20, null=True)

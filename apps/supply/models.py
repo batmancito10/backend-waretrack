@@ -6,6 +6,7 @@ from apps.base.models import BaseModel
 # Create your models here.
 
 class Proveedor(BaseModel):
+    imagen = models.ImageField(upload_to="", null=True)
     nombre = models.CharField(max_length=255)
     direccion = models.CharField(max_length=255)
     telefono = models.CharField(max_length=255)
@@ -26,5 +27,5 @@ class Pedido(BaseModel):
 class through_infoPedido(BaseModel):
     producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
     pedido = models.ForeignKey(Pedido, on_delete=models.SET_NULL, null=True)
-    cantidad = models.CharField(max_length=255)
-    precio_unitario = models.CharField(max_length=255)
+    cantidad = models.IntegerField()
+    precio_unitario = models.FloatField()
