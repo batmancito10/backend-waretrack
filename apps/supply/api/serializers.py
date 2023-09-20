@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from apps.supply.models import Proveedor, Pedido, through_infoPedido
 from apps.catalog.api.serializers import ProductoSerializer
+from apps.company.api.serializers import SedeSerializer
 
 
 class ProveedorSerializer(serializers.ModelSerializer):
@@ -26,5 +27,12 @@ class through_infoPedidoTotalSerializer(serializers.ModelSerializer):
     class Meta:
         model = through_infoPedido
         exclude = ("deleted_at",)
+        read_only_fields = ("created_at",)
+
+class ProveedorSedeSerializer(serializers.ModelSerializer):
+    sede = SedeSerializer(many=True)
+    class Meta:
+        model = Proveedor
+        fields = "__all__"
         read_only_fields = ("created_at",)
 #=============================================================================================================

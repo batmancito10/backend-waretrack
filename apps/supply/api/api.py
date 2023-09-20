@@ -3,22 +3,24 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_list_or_404
 from apps.supply.models import Pedido, through_infoPedido
-from .serializers import ProveedorSerializer, PedidoSerializer, through_infoPedidoSerializer, through_infoPedidoTotalSerializer
+from .serializers import (ProveedorSerializer, PedidoSerializer, through_infoPedidoSerializer,
+                          ProveedorSedeSerializer, through_infoPedidoTotalSerializer)
 
 
 class ProveedorViewSets(viewsets.ModelViewSet):
     queryset = ProveedorSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = ProveedorSerializer
 
-    # def retrieve(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
     #     user = request.user
     #     sede = user.sede.first()
 
-
-
-        # instance = self.get_object()
-        # instance = ProveedorSerializer(instance)
-        # return Response(status=status.HTTP_200_OK)
+        instance = self.get_object()
+        instance_data = ProveedorSedeSerializer(instance).data
+        for ob in instance_data["sede"]:
+            instance_sede = Pedido.objects.filter(deleted_at=None, sede=ob["id"], proveedor=instance_data["id"])
+            ob["pedidos"] = PedidoSerializer(instance_sede, many=True).data
+        return Response(instance_data,status=status.HTTP_200_OK)
 
 class PedidoViewSets(viewsets.ModelViewSet):
     queryset = PedidoSerializer.Meta.model.objects.filter(deleted_at=None)
