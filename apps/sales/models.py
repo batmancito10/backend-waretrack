@@ -15,6 +15,11 @@ class Cliente(BaseModel):
     email = models.EmailField(max_length=255, null=True)
     direccion = models.CharField(max_length=255, null=True)
     sede = models.ManyToManyField(Sede)
+    
+    class Meta:
+        ordering = ["id"]
+        verbose_name = 'Cliente'
+        verbose_name_plural = 'Clientes'
 
 class Factura(BaseModel):
     total = models.FloatField()
@@ -29,3 +34,8 @@ class Factura(BaseModel):
         if not self.codigo:
             self.codigo = ''.join(random.choice('0123456789') for _ in range(12))
         super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ["id"]
+        verbose_name = 'Factura'
+        verbose_name_plural = 'Facturas'

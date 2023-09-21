@@ -7,6 +7,10 @@ class Company(BaseModel):
     name = models.CharField(max_length=100)
     Logo = models.ImageField('Logo de la compañia', upload_to='media/', null=True)
     
+    class Meta:
+        ordering = ["id"]
+        verbose_name = 'Compañia'
+        verbose_name_plural = 'Compañia'
 
 class Sede(BaseModel):
     nombre = models.CharField(max_length=255)
@@ -16,3 +20,8 @@ class Sede(BaseModel):
 
     def __str__(self):
         return str(self.nombre)
+
+    class Meta:
+        ordering = ["id"]
+        verbose_name = 'Sede'
+        verbose_name_plural = 'Sedes'

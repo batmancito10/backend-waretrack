@@ -13,6 +13,11 @@ class Proveedor(BaseModel):
     email = models.EmailField(max_length=255)
     sede = models.ManyToManyField(Sede)
 
+    class Meta:
+        ordering = ["id"]
+        verbose_name = 'Proveedor'
+        verbose_name_plural = 'Proveedores'
+
 class Pedido(BaseModel):
     fecha_realizado = models.DateTimeField(null=True, blank=True)
     fecha_llegada = models.DateTimeField(null=True, blank=True)
@@ -23,9 +28,19 @@ class Pedido(BaseModel):
     producto = models.ManyToManyField(Producto, through='through_infoPedido')
     sede = models.ForeignKey(Sede, on_delete=models.SET_NULL, null=True)
 
+    class Meta:
+        ordering = ["id"]
+        verbose_name = 'Pedido'
+        verbose_name_plural = 'Pedidos'
+
 # Requiere una ManyToMany manual
 class through_infoPedido(BaseModel):
     producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
     pedido = models.ForeignKey(Pedido, on_delete=models.SET_NULL, null=True)
     cantidad = models.IntegerField()
     precio_unitario = models.FloatField()
+
+    class Meta:
+        ordering = ["id"]
+        verbose_name = 'Producto'
+        verbose_name_plural = 'Productos'
