@@ -5,8 +5,11 @@ from apps.company.models import Sede
 from apps.base.models import BaseModel
 # Create your models here.
  
+def upload_to_user(instance, filename):
+    return f"company {instance.sede.first().company.id}/users/{filename}"
 
 class Funcionario(BaseModel,AbstractUser):
+    imagen = models.ImageField(upload_to=upload_to_user, null=True)
     salario = models.FloatField(null=True,help_text=_(
             "The salary of the official"
         ))
@@ -23,4 +26,4 @@ class Funcionario(BaseModel,AbstractUser):
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
 
-    REQUIRED_FIELDS = ['email','name','last_name','sede',]
+    # REQUIRED_FIELDS = ['email','name','last_name','sede',]

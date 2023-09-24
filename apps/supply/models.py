@@ -5,8 +5,11 @@ from apps.catalog.models import Producto
 from apps.base.models import BaseModel
 # Create your models here.
 
+def upload_to_proveedor(instance, filename):
+    return f"company {instance.sede.first().company.id}/proveedor/{filename}"
+
 class Proveedor(BaseModel):
-    imagen = models.ImageField(upload_to="", null=True)
+    imagen = models.ImageField(upload_to=upload_to_proveedor, null=True)
     nombre = models.CharField(max_length=255)
     direccion = models.CharField(max_length=255)
     telefono = models.CharField(max_length=255)

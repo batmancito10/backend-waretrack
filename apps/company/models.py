@@ -2,10 +2,12 @@ from django.db import models
 from apps.base.models import BaseModel
 # Create your models here.
 
+def upload_to_logo_company(instance, filname):
+    return f"company {instance.id}/logo/{filname}"
 
 class Company(BaseModel):
     name = models.CharField(max_length=100)
-    Logo = models.ImageField('Logo de la compañia', upload_to='media/', null=True)
+    logo = models.ImageField('Logo de la compañia', upload_to=upload_to_logo_company, null=True)
     
     class Meta:
         ordering = ["id"]

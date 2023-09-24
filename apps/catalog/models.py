@@ -22,7 +22,11 @@ class Categoria(BaseModel):
         verbose_name = 'Categoria'
         verbose_name_plural = 'Categorias'
 
+def upload_to_producto(instance, filename):
+    return f"company {instance.sede.first().company.id}/productos/{filename}"
+
 class Producto(BaseModel):
+    imagen = models.ImageField(upload_to=upload_to_producto, null=True)
     nombre = models.CharField(max_length=255)
     marca = models.CharField(max_length=100, null=True)
     descripcion = models.TextField(null=True)

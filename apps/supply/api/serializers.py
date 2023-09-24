@@ -10,6 +10,12 @@ class ProveedorSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("created_at",)
 
+    def validate(self, data):
+        if self.context['request'].method == 'POST':
+            if 'sede' not in data or not data["sede"]:
+                raise serializers.ValidationError({"sede": '"sede" es un campo requerido'})
+        return data
+
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pedido

@@ -14,8 +14,9 @@ class FuncionarioSerializer(serializers.ModelSerializer):
         read_only_fields = ("last_login","created_at")
 
     def validate(self, data):
-        if 'sede' not in data or not data["sede"]:
-            raise serializers.ValidationError({"sede": '"sede" es un campo requerido'})
+        if self.context['request'].method == 'POST':
+            if 'sede' not in data or not data["sede"]:
+                raise serializers.ValidationError({"sede": '"sede" es un campo requerido'})
 
         return data
     # def validate_sede(self, value):
