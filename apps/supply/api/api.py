@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_list_or_404
+from apps.supply.permissions import BodegaPermission
 from apps.supply.models import Pedido, through_infoPedido
 from .serializers import (ProveedorSerializer, PedidoSerializer, through_infoPedidoSerializer,
                           ProveedorSedeSerializer, through_infoPedidoTotalSerializer)
@@ -10,11 +11,9 @@ from .serializers import (ProveedorSerializer, PedidoSerializer, through_infoPed
 class ProveedorViewSets(viewsets.ModelViewSet):
     queryset = ProveedorSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = ProveedorSerializer
+    permission_classes = [BodegaPermission]
 
     def retrieve(self, request, *args, **kwargs):
-    #     user = request.user
-    #     sede = user.sede.first()
-
         instance = self.get_object()
         instance_data = ProveedorSedeSerializer(instance).data
         for ob in instance_data["sede"]:
@@ -25,12 +24,19 @@ class ProveedorViewSets(viewsets.ModelViewSet):
 class PedidoViewSets(viewsets.ModelViewSet):
     queryset = PedidoSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = PedidoSerializer
+    permission_classes = [BodegaPermission]
 
     def list(self, request, *args, **kwargs):
         user = request.user
-        sede = user.sede.first()
+        grupos = list(user.groups.values_list('name', flat=True))
 
-        instance_pedido = Pedido.objects.filter(deleted_at=None)
+        if 'admin' in grupos:
+            company = user.sede.first().company
+            instance_pedido = Pedido.objects.filter(deleted_at=None, sede__company=company)
+        else:
+            sedesArrarId = user.sede.values_list('id', flat=True)
+            instance_pedido = Pedido.objects.filter(deleted_at=None, sede__in=sedesArrarId)
+
         instance_pedido = PedidoSerializer(instance_pedido, many=True).data
         for ob in instance_pedido:
             ob["producto"] = through_infoPedido.objects.filter(deleted_at=None, pedido=ob["id"]).values(
@@ -38,7 +44,7 @@ class PedidoViewSets(viewsets.ModelViewSet):
                 "created_at",
                 "cantidad",
                 "precio_unitario",
-                "producto")
+                "producto",)
         return Response(instance_pedido,status=status.HTTP_200_OK)
     
     def retrieve(self, request, *args, **kwargs):

@@ -7,11 +7,11 @@ class Command(BaseCommand):
     help = 'Crea los proveedor'
 
     def handle(self, *args, **kwargs):
-        index=0
-        sedes_instances=Sede.objects.all()[:3]
-        with open("apps/supply/jsons/proveedores.json", "r", encoding="utf-8") as JSONProovedor:
-            proveedores = json.load(JSONProovedor)
-        if not Proveedor.objects.filter().first():
+        if not Proveedor.objects.exists():
+            index=0
+            sedes_instances=Sede.objects.all()[:3]
+            with open("apps/supply/jsons/proveedores.json", "r", encoding="utf-8") as JSONProovedor:
+                proveedores = json.load(JSONProovedor)
             for ob in proveedores:
                 instance = Proveedor.objects.get_or_create(**ob)[0]
                 instance.sede.set([sedes_instances[index]])
