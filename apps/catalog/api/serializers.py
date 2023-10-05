@@ -19,6 +19,7 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("create_at",)
 
+
 class Through_stockSerializer(serializers.ModelSerializer):
     class Meta:
         model = Through_stock

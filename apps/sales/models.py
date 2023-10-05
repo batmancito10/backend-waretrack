@@ -26,9 +26,9 @@ class Factura(BaseModel):
     codigo = models.CharField(max_length=20) # generar codigo
     producto = models.ManyToManyField(Producto)
     servicio = models.ManyToManyField(Servicio)
-    funcionario = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
-    sede = models.ForeignKey(Sede, on_delete=models.SET_NULL, null=True)
-    cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
+    funcionario = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    sede = models.ForeignKey(Sede, on_delete=models.CASCADE, null=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True)
 
     def save(self, *args, **kwargs):
         if not self.codigo:

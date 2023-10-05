@@ -9,6 +9,9 @@ class Company(BaseModel):
     name = models.CharField(max_length=100)
     logo = models.ImageField('Logo de la compañia', upload_to=upload_to_logo_company, null=True)
     
+    def __str__(self):
+        return str(self.name)
+
     class Meta:
         ordering = ["id"]
         verbose_name = 'Compañia'
@@ -18,7 +21,7 @@ class Sede(BaseModel):
     nombre = models.CharField(max_length=255)
     direccion = models.CharField(max_length=255)
     ciudad = models.CharField(max_length=255)
-    company = models.ForeignKey(Company, null=True, on_delete=models.SET_NULL)
+    company = models.ForeignKey(Company, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.nombre)
