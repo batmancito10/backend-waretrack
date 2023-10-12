@@ -32,10 +32,10 @@ class PedidoViewSets(viewsets.ModelViewSet):
 
         if 'admin' in grupos:
             company = user.sede.first().company
-            instance_pedido = Pedido.objects.filter(deleted_at=None, sede__company=company)
+            instance_pedido = Pedido.objects.filter(deleted_at=None, sede__company=company).distinct()
         else:
             sedesArrarId = user.sede.values_list('id', flat=True)
-            instance_pedido = Pedido.objects.filter(deleted_at=None, sede__in=sedesArrarId)
+            instance_pedido = Pedido.objects.filter(deleted_at=None, sede__in=sedesArrarId).distinct()
 
         instance_pedido = PedidoSerializer(instance_pedido, many=True).data
         for ob in instance_pedido:
