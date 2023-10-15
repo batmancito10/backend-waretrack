@@ -29,7 +29,7 @@ class SedeViewsets(viewsets.ModelViewSet):
         productos = ProductoSerializer(productos, many=True).data
         for producto in productos:
             del producto["sedes"]
-            del producto["deleted"]
+            del producto["deleted_at"]
             producto["stock"] = Through_stock.objects.filter(producto=producto["id"], sede=id_sede).values("stock")
 
         return Response(productos,status.HTTP_200_OK)
