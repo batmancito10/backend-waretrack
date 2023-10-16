@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView
 from apps.catalog.permissions import CatalogoPermission
 from .serializers import CategoriaSerializer, ServicioSerializer, ProductoSerializer, productoSedeSerializer, Through_stockSerializer
 # from apps.catalog.models import 
@@ -122,7 +122,28 @@ class ProductoSedeListCreate(ListCreateAPIView):
         respuesta["sedes"] = stock
         return Response(respuesta,status=status.HTTP_200_OK)
 
-# class ProductoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-#     queryset = productoSedeSerializer.Meta.model.objects.filter(deleted_at=None)
-#     serializer_class = productoSedeSerializer
-#     permission_classes = [CatalogoPermission]
+class StockUpdateView(UpdateAPIView):
+    serializer_class = Through_stockSerializer
+
+    def partial_update(self, request, *args, **kwargs):
+        """
+        Actualizar el stock de un producto en una sede
+        
+        
+        Se debe de enviar por --URL-- las variables 'sede' y 'producto' y en el BODY el 'stock'
+        """
+        id_sede = kwargs.get('sede', [])
+        id_producto = kwargs.get('producto', [])
+
+        if not id_producto or not id_sede:
+            return Response({"message": "faltan parametros para la busqueda"},status.HTTP_402_PAYMENT_REQUIRED)
+        try:
+            stock =  Through_stockSerializer.Meta.model.objects.filter(sede=id_sede, producto=id_producto).first()
+            if not stock:
+                return Response({"message": "producto no encontrado"},status.HTTP_404_NOT_FOUND)
+            stock.stock = request.data["stock"]
+            stock.save()
+        except KeyError:
+            return Response({"message": "falta el stock para el producto"},status.HTTP_402_PAYMENT_REQUIRED)
+            
+        return Response(status.HTTP_200_OK)
