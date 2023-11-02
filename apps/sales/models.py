@@ -20,6 +20,9 @@ class Cliente(BaseModel):
         ordering = ["id"]
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
+    
+    def __str__(self):
+        return f"{self.cc}"
 
 class Factura(BaseModel):
     total = models.FloatField()
@@ -39,3 +42,6 @@ class Factura(BaseModel):
         ordering = ["id"]
         verbose_name = 'Factura'
         verbose_name_plural = 'Facturas'
+
+    def __str__(self):
+        return f"{self.codigo}"

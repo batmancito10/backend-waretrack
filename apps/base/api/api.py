@@ -1,15 +1,22 @@
 
 from rest_framework import permissions, status, viewsets
 from drf_yasg.views import get_schema_view
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import login, logout
 from django.shortcuts import get_object_or_404
-from django.apps import apps
-from .serializers import GroupSerializer
 from drf_yasg import openapi
+from django.apps import apps
+from datetime import datetime, timedelta
+from .serializers import GroupSerializer
 from .serializers import UserDetailsSerializer,CompanyDetailsSerializer,SedeDetailsSerializer,EmailSerializer
+from apps.sales.models import Factura, Cliente
+from apps.catalog.models import Producto,Servicio,Through_stock
+from apps.catalog.api.serializers import ProductoSerializer,ServicioSerializer
+from apps.supply.models import Pedido
+from apps.company.models import Sede
 
 
 schema_view = get_schema_view(
@@ -50,7 +57,6 @@ def loginTokenUser(request, userr):
     tokens = {"access":access_token, "refresh":refresh_token}
     tokens["user"] = FuncionarioTotalSerialiser(userr).data
     return tokens
-
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
@@ -112,4 +118,29 @@ class UserValidationGoogle(viewsets.GenericViewSet):
 
         tokens = loginTokenUser(request, userr)
 
-        return Response(tokens, status=status.HTTP_200_OK)  
+        return Response(tokens, status=status.HTTP_200_OK)
+
+class CajaVentaGet(viewsets.GenericViewSet):
+    @action(detail=False, methods=['get'])
+    def completa(self, request, *args, **kwargs):
+        """
+        Datos para la vista de caja
+
+
+        Esta vista se usa para optimizar las consultas de la vista de caja
+        """
+        user = request.user
+        sedes = list(user.sede.all().values(
+            "id","nombre","direccion","ciudad",
+        ))
+
+        list_id_sedes = [id["id"] for id in sedes]
+
+        respuesta = {}
+        respuesta["sedes"] = sedes
+
+        respuesta["servicios"] = ServicioSerializer(Servicio.objects.filter(sedes__id__in=list_id_sedes), many=True).data
+        respuesta["productos"] = ProductoSerializer(Producto.objects.filter(sedes__id__in=list_id_sedes).distinct(), many=True).data
+        for obProducto in respuesta["productos"]:
+            obProducto["sedes"] = Through_stock.objects.filter(producto=obProducto["id"],sede__id__in=obProducto["sedes"]).values("sede_id","stock") 
+        return Response(respuesta,status.HTTP_200_OK)

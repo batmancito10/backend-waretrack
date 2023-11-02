@@ -87,8 +87,6 @@ class ProductoSedeListCreate(ListCreateAPIView):
             sedesArrarId = user.sede.values_list('id', flat=True)
             instance_productos = ProductoSerializer.Meta.model.objects.filter(deleted_at=None, sedes__in=sedesArrarId).distinct()
         instance_productos = ProductoSerializer(instance_productos, many=True).data
-        # productos = self.get_queryset()
-        # productos = self.get_serializer(productos, many=True).data
 
         for ob in instance_productos:
             instance = Through_stockSerializer.Meta.model.objects.filter(deleted_at=None, producto=ob["id"])
@@ -145,5 +143,4 @@ class StockUpdateView(UpdateAPIView):
             stock.save()
         except KeyError:
             return Response({"message": "falta el stock para el producto"},status.HTTP_402_PAYMENT_REQUIRED)
-            
         return Response(status.HTTP_200_OK)
