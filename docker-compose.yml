@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+ 
+  encuestas_api:
+    image: buho/waretarck_api
+    command: 'python3 manage.py runserver 0.0.0.0:8000'
+    volumes:
+      - .:/backend-waretrack
+    environment:
+      VIRTUAL_HOST: 'waretrack.co'
+      C_FORCE_ROOT: 1
+      LC_ALL: 'C.UTF-8'
+      LANG: 'C.UTF-8'
+      TZ: 'America/Bogota'
+      VIRTUAL_PORT: '8000'
+      LETSENCRYPT_HOST: 'waretrack.co'
+      LETSENCRYPT_EMAIL: 'moren1viguel@gmail.com'
+    networks:
+        - default
+        - nginx_proxy
+
+networks:
+  default:
+  nginx_proxy:
+    external: true
