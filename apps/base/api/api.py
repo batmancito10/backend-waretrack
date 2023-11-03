@@ -130,7 +130,13 @@ class CajaVentaGet(viewsets.GenericViewSet):
         Esta vista se usa para optimizar las consultas de la vista de caja
         """
         user = request.user
+
+
         sedes = list(user.sede.all().values(
+            "id","nombre","direccion","ciudad",
+        ))
+        if "admin" in list(user.groups.values_list('name', flat=True)):
+            sedes = list(Sede.objects.filter(company=user.sede.first().company).values(
             "id","nombre","direccion","ciudad",
         ))
 
@@ -144,3 +150,40 @@ class CajaVentaGet(viewsets.GenericViewSet):
         for obProducto in respuesta["productos"]:
             obProducto["sedes"] = Through_stock.objects.filter(producto=obProducto["id"],sede__id__in=obProducto["sedes"]).values("sede_id","stock") 
         return Response(respuesta,status.HTTP_200_OK)
+
+class Dashboard(viewsets.GenericViewSet):
+    @action(detail=False, methods=['get'])
+    def metricas(self, request, *args, **kwargs):
+        """
+        Metricas
+        
+        
+        Esta vista proporciona datos para proyectar resultados de mis operaciones
+        """
+        user = request.user
+        company = user.sede.first().company
+
+        metricas = {}
+        hace_una_semana = datetime.now() - timedelta(days=7)
+        
+        # Metricas para las ventas de la ultima semana
+        metricas["ventas_semana"] = list(Factura.objects.filter(sede__company=company, created_at__gte=hace_una_semana).values(
+            "total","codigo","producto","servicio","funcionario","sede","cliente",
+        ))
+
+        # Metricas para pedidos de la ultima semana
+        metricas["pedidos_semana"] = list(Pedido.objects.filter(sede__company=company, created_at__gte=hace_una_semana).values(
+            "fecha_realizado","fecha_llegada","estado","total","proveedor","funcionario","producto","sede",
+        ))
+
+        # Metricas de productos por sedes
+        sedes = list(Sede.objects.filter(company=company).values())
+        metricas["productos_total"] = [{"sede":obSede["nombre"],"productos":Producto.objects.filter(sedes=obSede["id"]).count()} for obSede in sedes]
+
+        # Metricas de servicios por sedes
+        metricas["servicios_total"] = [{"sede":obSede["nombre"],"servicios":Servicio.objects.filter(sedes=obSede["id"]).count()} for obSede in sedes]
+
+        # Ventas por sede
+        metricas["ventas_sede"] = [{"sede":obSede["nombre"],"ventas":Factura.objects.filter(sede=obSede["id"], created_at__gte=hace_una_semana).count()} for obSede in sedes]
+
+        return Response(metricas,status.HTTP_200_OK)

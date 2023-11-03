@@ -1,13 +1,13 @@
 from rest_framework import routers
 from django.urls import path, re_path
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
-from .api import schema_view, CustomTokenObtainPairView, UserValidationGoogle,CajaVentaGet
+from .api import schema_view, CustomTokenObtainPairView, UserValidationGoogle,Dashboard,CajaVentaGet
 
 
 router = routers.DefaultRouter()
 
 router.register('token/google', UserValidationGoogle, 'token')
-# router.register('metricas', Dashboard, 'metricas-default')
+router.register('metricas', Dashboard, 'metricas-default')
 router.register('caja', CajaVentaGet, 'caja-view')
 
 urlpatterns = router.urls
