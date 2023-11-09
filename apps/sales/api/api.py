@@ -1,10 +1,12 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .serializers import ClienteSerializer, FacturaSerializer
+from .permissions import VentasPermission
 
 
 class ClienteViewSets(viewsets.GenericViewSet):
     serializer_class = ClienteSerializer
+    permission_classes = [VentasPermission]
 
     def get_queryset(self):
         return ClienteSerializer.Meta.model.objects.filter(deleted_at=None)
@@ -35,6 +37,7 @@ class ClienteViewSets(viewsets.GenericViewSet):
 
 class FacturaViewSets(viewsets.ModelViewSet):
     serializer_class = FacturaSerializer
+    permission_classes = [VentasPermission]
 
     def get_queryset(self):
         return FacturaSerializer.Meta.model.objects.filter(deleted_at=None)

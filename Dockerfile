@@ -4,7 +4,7 @@ LABEL maintainer="waretrack_team <moren1viguel@gmail.com>"
 
 # Instalar paquetes y dependencias
 RUN apt-get update && apt-get install -y \
-    xorg xvfb dbus-x11 imagemagick xfonts-100dpi xfonts-75dpi xfonts-cyrillic curl ghostscript firefox xvfb dpkg openssh-server wget libpq-dev libpangocairo-1.0-0 && \
+    xorg xvfb dbus-x11 imagemagick xfonts-100dpi xfonts-75dpi curl ghostscript xvfb dpkg openssh-server wget libpq-dev libpangocairo-1.0-0 && \
     apt-get clean
 
 # Configurar el entorno de tiempo

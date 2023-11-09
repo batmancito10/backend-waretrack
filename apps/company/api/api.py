@@ -5,16 +5,19 @@ from .serializers import CompanySerializer, SedeSerializer
 from ..models import Sede
 from apps.catalog.models import Producto, Through_stock
 from apps.catalog.api.serializers import ProductoSerializer
+from .permissions import CompanyPermission
 # from apps.catalog.api.serializers import SedeSerializer
 
 
 class CompanyViewsets(viewsets.ModelViewSet):
     queryset = CompanySerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = CompanySerializer
+    permission_classes = [CompanyPermission]
 
 class SedeViewsets(viewsets.ModelViewSet):
     queryset = SedeSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = SedeSerializer
+    permission_classes = [CompanyPermission]
 
     @action(detail=True, methods=['get'])
     def stock(self, request, *args, **kwargs):

@@ -168,7 +168,7 @@ class Dashboard(viewsets.GenericViewSet):
         
         # Metricas para las ventas de la ultima semana
         metricas["ventas_semana"] = list(Factura.objects.filter(sede__company=company, created_at__gte=hace_una_semana).values(
-            "total","codigo","producto","servicio","funcionario","sede","cliente",
+            "total","codigo","producto","servicio","funcionario","sede","cliente","created_at"
         ))
 
         # Metricas para pedidos de la ultima semana

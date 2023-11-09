@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_list_or_404
-from apps.supply.permissions import BodegaPermission
+from .permissions import BodegaPermission
 from apps.supply.models import Pedido, through_infoPedido
 from .serializers import (ProveedorSerializer, PedidoSerializer, through_infoPedidoSerializer,
                           ProveedorSedeSerializer, through_infoPedidoTotalSerializer)
