@@ -37,7 +37,7 @@ class ClienteViewSets(viewsets.GenericViewSet):
         instance.save()
         return Response(instance.data,status=status.HTTP_201_CREATED)
 
-class FacturaViewSets(viewsets.ModelViewSet):
+class FacturaViewSets(viewsets.GenericViewSet):
     serializer_class = FacturaSerializer
     permission_classes = [VentasPermission]
 
@@ -55,8 +55,18 @@ class FacturaViewSets(viewsets.ModelViewSet):
             instance = list(Factura.objects.filter(sedes__id__in=sedes_id).values())
 
         for ob in instance:
-            ob["servicio"] = (list(Through_venta_servicio.objects.filter(factura=ob["id"]).values()))
-            ob["producto"] = (list(Through_venta_producto.objects.filter(factura=ob["id"]).values()))
+            ob["servicio"] = (list(Through_venta_servicio.objects.filter(factura=ob["id"]).values(
+                "unidades",
+                "servicio_id",
+                "created_at",
+                "id",
+            )))
+            ob["producto"] = (list(Through_venta_producto.objects.filter(factura=ob["id"]).values(
+                "unidades",
+                "producto_id",
+                "created_at",
+                "id",
+            )))
 
         return Response(instance, status.HTTP_200_OK)
     def create(self, request, *args, **kwargs):
