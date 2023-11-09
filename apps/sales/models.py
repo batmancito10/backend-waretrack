@@ -8,7 +8,7 @@ from apps.base.models import BaseModel
 # Create your models here.
 
 class Cliente(BaseModel):
-    cc = models.CharField(max_length=255)
+    cc = models.CharField(max_length=255, null=True, blank=True)
     nombre = models.CharField(max_length=255, null=True)
     apellido = models.CharField(max_length=255, null=True)
     telefono = models.CharField(max_length=255, null=True)

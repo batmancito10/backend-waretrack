@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from .serializers import ClienteSerializer, FacturaSerializer
 from .permissions import VentasPermission
 from .serializers import Through_venta_servicioSerializer, Through_venta_productoSerializer
-from ..models import Factura, Through_venta_producto, Through_venta_servicio
+from ..models import Factura, Through_venta_producto, Through_venta_servicio, Cliente
+from apps.catalog.models import Through_stock
 
 
 class ClienteViewSets(viewsets.GenericViewSet):
@@ -50,7 +51,7 @@ class FacturaViewSets(viewsets.GenericViewSet):
         sedes_id = list(user.sede.values_list("id", flat=True))
 
         if "admin" in list(request.user.groups.values_list('name', flat=True)):
-            instance = list(Factura.objects.filter(cliente=company.id).values())
+            instance = list(Factura.objects.filter(sede__company=company.id).values())
         else:
             instance = list(Factura.objects.filter(sedes__id__in=sedes_id).values())
 
@@ -80,11 +81,24 @@ class FacturaViewSets(viewsets.GenericViewSet):
         """
         servicios = request.data.get('servicio',[])
         productos = request.data.get('producto',[])
+        cliente = request.data.get('cc',None)
 
-        factura = FacturaSerializer(data=request.data)
+        cliente, _ = Cliente.objects.get_or_create(cc=cliente)
+
+        data = request.data
+        data["cliente"] = cliente.id
+
+        print(cliente)
+        print(data)
+
+        factura = FacturaSerializer(data=data)
         factura.is_valid(raise_exception=True)
         instance_factura = factura.save()
+        print(instance_factura.sede, instance_factura.funcionario)
 
+        if not instance_factura.sede.nombre in list(cliente.sede.values_list("nombre", flat=True)):
+            cliente.sede.set([instance_factura.sede])
+            print(cliente.sede)
 
         id_factura = instance_factura.id
 
@@ -95,7 +109,10 @@ class FacturaViewSets(viewsets.GenericViewSet):
                 "unidades":ob["unidades"],}
             )
             instance.is_valid(raise_exception=True)
-            instance.save()
+            instance_producto = instance.save()
+            stock = Through_stock.objects.filter(producto=instance_producto.producto, sede=instance_factura.sede).first()
+            stock.stock =  stock.stock - instance_producto.unidades
+            stock.save()
         for ob in servicios:
             instance = Through_venta_servicioSerializer(data={
                 "servicio":ob["servicio"],
