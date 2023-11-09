@@ -87,6 +87,7 @@ class FacturaViewSets(viewsets.GenericViewSet):
 
         data = request.data
         data["cliente"] = cliente.id
+        data["funcionario"] = request.user.id
 
         print(cliente)
         print(data)
