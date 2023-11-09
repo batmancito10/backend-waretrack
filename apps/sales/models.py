@@ -27,8 +27,8 @@ class Cliente(BaseModel):
 class Factura(BaseModel):
     total = models.FloatField()
     codigo = models.CharField(max_length=20) # generar codigo
-    producto = models.ManyToManyField(Producto)
-    servicio = models.ManyToManyField(Servicio)
+    producto = models.ManyToManyField(Producto, through='Through_venta_producto')
+    servicio = models.ManyToManyField(Servicio, through='Through_venta_servicio')
     funcionario = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     sede = models.ForeignKey(Sede, on_delete=models.CASCADE, null=True)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, null=True)
@@ -45,3 +45,15 @@ class Factura(BaseModel):
 
     def __str__(self):
         return f"{self.codigo}"
+
+# Requiere una ManyToMany manual
+class Through_venta_servicio(BaseModel):
+    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE, null=True, blank=False)
+    factura = models.ForeignKey(Factura, on_delete=models.CASCADE, null=True, blank=False)
+    unidades = models.IntegerField(default=1)
+
+
+class Through_venta_producto(BaseModel):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, null=True, blank=False)
+    factura = models.ForeignKey(Factura, on_delete=models.CASCADE, null=True, blank=False)
+    unidades = models.IntegerField(default=1)
