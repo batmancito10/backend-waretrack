@@ -26,7 +26,7 @@ class Cliente(BaseModel):
 
 class Factura(BaseModel):
     total = models.FloatField()
-    codigo = models.CharField(max_length=20) # generar codigo
+    codigo = models.CharField(max_length=20, blank=True) # generar codigo
     producto = models.ManyToManyField(Producto, through='Through_venta_producto')
     servicio = models.ManyToManyField(Servicio, through='Through_venta_servicio')
     funcionario = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)

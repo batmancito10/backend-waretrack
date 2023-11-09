@@ -210,6 +210,9 @@ atlassian-ide-plugin.xml
 *.py[cod] 
 *$py.class 
 
+#SQL
+*.sql
+
 # Distribution / packaging 
 .Python build/ 
 develop-eggs/ 
