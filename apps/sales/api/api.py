@@ -1,9 +1,11 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from .serializers import ClienteSerializer, FacturaSerializer
 from .permissions import VentasPermission
 from .serializers import Through_venta_servicioSerializer, Through_venta_productoSerializer
 from ..models import Factura, Through_venta_producto, Through_venta_servicio, Cliente
+from apps.catalog.models import Producto, Servicio
 from apps.catalog.models import Through_stock
 
 
@@ -32,7 +34,6 @@ class ClienteViewSets(viewsets.GenericViewSet):
         
         Esta vista creara o traera clientes
         """
-        print(request.data)
         instance = self.get_serializer(data=request.data)
         instance.is_valid(raise_exception=True)
         instance.save()
@@ -70,6 +71,36 @@ class FacturaViewSets(viewsets.GenericViewSet):
             )))
 
         return Response(instance, status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['get'])
+    def sedes(self, request, *args, **kwargs):
+        id_sede = kwargs.get('pk')
+        facturas = Factura.objects.filter(sede=id_sede, deleted_at=None)
+        facturas = FacturaSerializer(facturas, many=True).data
+
+        for ob_fact in facturas:
+            ob_fact["producto"]=list(Through_venta_producto.objects.filter(producto__id__in=ob_fact["producto"]).values())
+            lista = []
+            for ob in ob_fact["producto"]:
+                producto = Producto.objects.filter(id=ob["producto_id"]).values().first()
+                producto["unidades"] = ob["unidades"]
+                lista.append(producto)
+            ob_fact["producto"] = lista
+            
+
+        for ob_fact in facturas:
+            ob_fact["servicio"]=list(Through_venta_servicio.objects.filter(servicio__id__in= ob_fact["servicio"]).values())
+            lista = []
+            for ob in ob_fact["servicio"]:
+                servicio = Servicio.objects.filter(id=ob["servicio_id"]).values().first()
+                servicio["unidades"] = ob["unidades"]
+                lista.append(servicio)
+            ob_fact["servicio"] = lista
+        
+        
+        
+        return Response(facturas, status.HTTP_200_OK)
+
     def create(self, request, *args, **kwargs):
         """
         Vista para crear facturas
@@ -89,17 +120,13 @@ class FacturaViewSets(viewsets.GenericViewSet):
         data["cliente"] = cliente.id
         data["funcionario"] = request.user.id
 
-        print(cliente)
-        print(data)
 
         factura = FacturaSerializer(data=data)
         factura.is_valid(raise_exception=True)
         instance_factura = factura.save()
-        print(instance_factura.sede, instance_factura.funcionario)
 
         if not instance_factura.sede.nombre in list(cliente.sede.values_list("nombre", flat=True)):
             cliente.sede.set([instance_factura.sede])
-            print(cliente.sede)
 
         id_factura = instance_factura.id
 
