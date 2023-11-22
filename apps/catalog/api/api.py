@@ -136,7 +136,7 @@ class StockUpdateView(UpdateAPIView):
         if not id_producto or not id_sede:
             return Response({"message": "faltan parametros para la busqueda"},status.HTTP_402_PAYMENT_REQUIRED)
         try:
-            stock =  Through_stockSerializer.Meta.model.objects.filter(sede=id_sede, producto=id_producto).first()
+            stock =  Through_stockSerializer.Meta.model.objects.filter(sede=id_sede, producto=id_producto, deleted_at=None).first()
             if not stock:
                 return Response({"message": "producto no encontrado"},status.HTTP_404_NOT_FOUND)
             stock.stock = request.data["stock"]

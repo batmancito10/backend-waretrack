@@ -52,18 +52,18 @@ class FacturaViewSets(viewsets.GenericViewSet):
         sedes_id = list(user.sede.values_list("id", flat=True))
 
         if "admin" in list(request.user.groups.values_list('name', flat=True)):
-            instance = list(Factura.objects.filter(sede__company=company.id).values())
+            instance = list(Factura.objects.filter(sede__company=company.id, deleted_at=None).values())
         else:
-            instance = list(Factura.objects.filter(sedes__id__in=sedes_id).values())
+            instance = list(Factura.objects.filter(sedes__id__in=sedes_id, deleted_at=None).values())
 
         for ob in instance:
-            ob["servicio"] = (list(Through_venta_servicio.objects.filter(factura=ob["id"]).values(
+            ob["servicio"] = (list(Through_venta_servicio.objects.filter(factura=ob["id"], deleted_at=None).values(
                 "unidades",
                 "servicio_id",
                 "created_at",
                 "id",
             )))
-            ob["producto"] = (list(Through_venta_producto.objects.filter(factura=ob["id"]).values(
+            ob["producto"] = (list(Through_venta_producto.objects.filter(factura=ob["id"], deleted_at=None).values(
                 "unidades",
                 "producto_id",
                 "created_at",
@@ -79,20 +79,20 @@ class FacturaViewSets(viewsets.GenericViewSet):
         facturas = FacturaSerializer(facturas, many=True).data
 
         for ob_fact in facturas:
-            ob_fact["producto"]=list(Through_venta_producto.objects.filter(producto__id__in=ob_fact["producto"]).values())
+            ob_fact["producto"]=list(Through_venta_producto.objects.filter(producto__id__in=ob_fact["producto"], deleted_at=None).values())
             lista = []
             for ob in ob_fact["producto"]:
-                producto = Producto.objects.filter(id=ob["producto_id"]).values().first()
+                producto = Producto.objects.filter(id=ob["producto_id"], deleted_at=None).values().first()
                 producto["unidades"] = ob["unidades"]
                 lista.append(producto)
             ob_fact["producto"] = lista
             
 
         for ob_fact in facturas:
-            ob_fact["servicio"]=list(Through_venta_servicio.objects.filter(servicio__id__in= ob_fact["servicio"]).values())
+            ob_fact["servicio"]=list(Through_venta_servicio.objects.filter(servicio__id__in= ob_fact["servicio"], deleted_at=None).values())
             lista = []
             for ob in ob_fact["servicio"]:
-                servicio = Servicio.objects.filter(id=ob["servicio_id"]).values().first()
+                servicio = Servicio.objects.filter(id=ob["servicio_id"], deleted_at=None).values().first()
                 servicio["unidades"] = ob["unidades"]
                 lista.append(servicio)
             ob_fact["servicio"] = lista
@@ -114,7 +114,7 @@ class FacturaViewSets(viewsets.GenericViewSet):
         productos = request.data.get('producto',[])
         cliente = request.data.get('cc',None)
 
-        cliente, _ = Cliente.objects.get_or_create(cc=cliente)
+        cliente, _ = Cliente.objects.get_or_create(cc=cliente , deleted_at=None)
 
         data = request.data
         data["cliente"] = cliente.id
@@ -138,7 +138,7 @@ class FacturaViewSets(viewsets.GenericViewSet):
             )
             instance.is_valid(raise_exception=True)
             instance_producto = instance.save()
-            stock = Through_stock.objects.filter(producto=instance_producto.producto, sede=instance_factura.sede).first()
+            stock = Through_stock.objects.filter(producto=instance_producto.producto, sede=instance_factura.sede, deleted_at=None).first()
             stock.stock =  stock.stock - instance_producto.unidades
             stock.save()
         for ob in servicios:

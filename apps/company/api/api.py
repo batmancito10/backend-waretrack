@@ -33,6 +33,6 @@ class SedeViewsets(viewsets.ModelViewSet):
         for producto in productos:
             del producto["sedes"]
             del producto["deleted_at"]
-            producto["stock"] = Through_stock.objects.filter(producto=producto["id"], sede=id_sede).values("stock")
+            producto["stock"] = Through_stock.objects.filter(producto=producto["id"], sede=id_sede, deleted_at=None).values("stock")
 
         return Response(productos,status.HTTP_200_OK)
