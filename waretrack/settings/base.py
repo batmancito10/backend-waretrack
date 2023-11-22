@@ -52,6 +52,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
 ]
 
+CSRF_USE_SESSIONS = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+
 
 INSTALLED_APPS = BASE_APPS + EXTERNAL_APPS + MY_APPS
 
@@ -64,7 +69,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     # 'rest_framework.middleware.DjangoRestFrameworkMiddleware',
     # 'djangorestframework.middleware.DjangoRestFrameworkMiddleware',
     # 'TokenMiddleware',
