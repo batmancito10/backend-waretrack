@@ -78,6 +78,11 @@ class FacturaViewSets(viewsets.GenericViewSet):
         facturas = Factura.objects.filter(sede=id_sede, deleted_at=None)
         facturas = FacturaSerializer(facturas, many=True).data
 
+        for ob in facturas:
+            if ob["cliente"]:
+                ob["cliente"] = Cliente.objects.filter(id=ob["cliente"]).values("cc").first()["cc"]
+
+
         for ob_fact in facturas:
             ob_fact["producto"]=list(Through_venta_producto.objects.filter(producto__id__in=ob_fact["producto"], deleted_at=None).values())
             lista = []
