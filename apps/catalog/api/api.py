@@ -1,7 +1,11 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.decorators import action 
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from django.db.models import Q
 from apps.catalog.permissions import CatalogoPermission
+from apps.catalog.models import Producto
+from apps.catalog.api.serializers import ProductoSerializer
 from .serializers import CategoriaSerializer, ServicioSerializer, ProductoSerializer, productoSedeSerializer, Through_stockSerializer
 # from apps.catalog.models import 
 
@@ -19,6 +23,30 @@ class ProductoViewsets(viewsets.ModelViewSet):
     queryset = ProductoSerializer.Meta.model.objects.filter(deleted_at=None)
     serializer_class = ProductoSerializer
     permission_classes = [CatalogoPermission]
+
+    @action(detail=False, methods=["get"],)
+    def activos(self, request, *args, **kwargs):
+        """
+        Vista para listar los productos y activos
+        
+        
+        Esta vista se usa para listar los productos y los activos de una empresa
+        """
+        user = request.user
+        company = user.sede.first().company
+
+        pro_act = {}
+
+        # Filtrar productos por tipo 'producto' y 'activo'
+        productos = Producto.objects.filter(categoria__tipo='producto', deleted_at=None)
+        pro_act["productos"] = ProductoSerializer(productos, many=True).data
+
+        # Filtrar activos por tipo 'activo'
+        activos = Producto.objects.filter(categoria__tipo='activo', deleted_at=None)
+        pro_act["activos"] = ProductoSerializer(activos, many=True).data
+        
+        return Response(pro_act, status.HTTP_200_OK)
+
 
     def list(self, request, *args, **kwargs):
         user = request.user
