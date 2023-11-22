@@ -47,6 +47,11 @@ EXTERNAL_APPS = [
     'drf_yasg',
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "https://api.waretrack.co",
+    "http://localhost:8000",
+]
+
 
 INSTALLED_APPS = BASE_APPS + EXTERNAL_APPS + MY_APPS
 
